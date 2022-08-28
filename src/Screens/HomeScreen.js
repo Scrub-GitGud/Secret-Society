@@ -112,7 +112,7 @@ export default function HomeScreen() {
                 <Text style={styles.action_btn_text}>Create Chat</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setModalVisible2(true)} style={[styles.action_btn, margin.l_5, margin.r_5]}>
-                <MaterialIcons style={[margin.b_10, styles.action_icon]} name="group" size={30} color="white" />
+                <MaterialIcons style={[margin.b_10, styles.action_icon]} name="group-add" size={30} color="white" />
                 <Text style={styles.action_btn_text}>Community</Text>
             </TouchableOpacity>
             {is_auth ? (
