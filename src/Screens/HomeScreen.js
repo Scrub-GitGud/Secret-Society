@@ -8,15 +8,17 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Entypo from 'react-native-vector-icons/Entypo';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useEffect, useState } from 'react';
-import MyModal from '../Components/MyModal';
+import CreateChatModal from '../Components/CreateChatModal';
 import Toast from 'react-native-toast-message';
 import Communities from '../Components/Communities';
+import CreateCommunityModal from '../Components/CreateCommunityModal';
 
 export default function HomeScreen() {
   
     const navigation = useNavigation();
 
     const [modalVisible, setModalVisible] = useState(false);
+    const [modalVisible2, setModalVisible2] = useState(false);
     const [loadingChat, setLoadingChat] = useState(false);
     const [is_auth, setIsAuth] = useState(true);
 
@@ -33,7 +35,7 @@ export default function HomeScreen() {
             setLoadingChat(false)
             clearText()
             if(code === 'aaa') {
-                navigation.navigate('Chat', { code: code })
+                navigation.navigate('Chat', { code })
             } else {
                 Toast.show({type: 'error', text1: "Chat group doesn't exist. Please check your code."});
             }
@@ -59,9 +61,26 @@ export default function HomeScreen() {
             if(code === 'aaa') {
                 // ! If already exists, take to the chat group instead of creating.
                 Toast.show({type: 'error', text1: "Chat group already exist."});
-                setTimeout(() => navigation.navigate('Chat', { code: code }), 1000);
+                setTimeout(() => navigation.navigate('Chat', { code }), 1000);
             } else {
-                navigation.navigate('Chat', { code: code })
+                navigation.navigate('Chat', { code })
+            }
+        }, 2000);
+    }
+
+    // ! ==================
+    // ! Create Community
+    // ! ==================
+    const createCommunity = (title, clearText) => {
+        console.log(code);
+        setTimeout(() => {
+            setModalVisible2(!modalVisible2)
+            clearText()
+            // TODO: Generate Code
+            if(title == 'illuminati') {
+                Toast.show({type: 'error', text1: "Community already exist."});
+            } else {
+                navigation.navigate('Chat', { code, title })
             }
         }, 2000);
     }
@@ -78,7 +97,8 @@ export default function HomeScreen() {
       <SafeAreaView style={[master.container, styles.parent]}>
 
         <View>
-            <MyModal modalVisible={modalVisible} setModalVisible={setModalVisible} createChat={createChat}/>
+            <CreateChatModal modalVisible={modalVisible} setModalVisible={setModalVisible} createChat={createChat}/>
+            <CreateCommunityModal modalVisible={modalVisible2} setModalVisible={setModalVisible2} createCommunity={createCommunity}/>
             <Toast />
         </View>
 
@@ -91,7 +111,7 @@ export default function HomeScreen() {
                 <FontAwesome5 style={[margin.b_10, styles.action_icon]} name="plus" size={30} color="white" />
                 <Text style={styles.action_btn_text}>Create Chat</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.action_btn, margin.l_5, margin.r_5]}>
+            <TouchableOpacity onPress={() => setModalVisible2(true)} style={[styles.action_btn, margin.l_5, margin.r_5]}>
                 <MaterialIcons style={[margin.b_10, styles.action_icon]} name="group" size={30} color="white" />
                 <Text style={styles.action_btn_text}>Community</Text>
             </TouchableOpacity>

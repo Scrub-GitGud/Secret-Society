@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Alert, Modal, StyleSheet, Text, Pressable, View, TextInput } from "react-native";
 
-export default MyModal = ({modalVisible, setModalVisible, createChat}) => {
+export default CreateCommunityModal = ({modalVisible, setModalVisible, createCommunity}) => {
 
     const [text, setText] = useState("");
 
@@ -26,16 +26,16 @@ export default MyModal = ({modalVisible, setModalVisible, createChat}) => {
 
                     <View style={styles.input_container}>
 
-                      <Text style={styles.title}>Create New Chat Group</Text>
+                      <Text style={styles.title}>Create New Community</Text>
                       
-                      <TextInput placeholder='Enter secret key' onChangeText={setText} value={text} style={styles.input} selectionColor="black" autoCapitalize='none'/>
+                      <TextInput placeholder='Enter the title' onChangeText={setText} value={text} style={styles.input} selectionColor="black" autoCapitalize='none'/>
                     </View>
 
                     <View style={styles.flex}>
                         <Pressable style={[styles.button, styles.buttonClose]} onPress={() => setModalVisible(!modalVisible)}>
                           <Text style={[styles.textStyle, styles.textBlack]}>Close</Text>
                         </Pressable>
-                        <Pressable style={[styles.button, styles.buttonSubmit]} onPress={() => createChat(text, clearText)}>
+                        <Pressable style={[styles.button, styles.buttonSubmit]} onPress={() => createCommunity(text, clearText)}>
                           <Text style={styles.textStyle}>Create</Text>
                         </Pressable>
                     </View>
