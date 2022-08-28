@@ -11,8 +11,10 @@ export default function ChatScreen({route}) {
 
     // ! Changing Screen Header title
     useEffect(() => {
+      let title = route.params.code
+      if(route.params.title) title = route.params.title
       navigation.setOptions({
-        title: `Chat - ${route.params.code}`,
+        title: `Chat - ${title}`,
       })
     }, []);
 
@@ -77,6 +79,7 @@ export default function ChatScreen({route}) {
 
           <ScrollView 
             ref={scrollViewRef} style={styles.scrollView}
+            // ! Allows to scroll at the bottom
             onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}
           >
             {messages.map(message => (
