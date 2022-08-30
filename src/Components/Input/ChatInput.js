@@ -5,10 +5,16 @@ import Icon from 'react-native-vector-icons/Ionicons';
 export default function ChatInput({onClick}) {
 
     const [text, setText] = useState("");
+
+    const clearText = () => {
+        console.log("text Cleared");
+        setText("")
+    }
     
     return (
         <View style={styles.parent}>
             <TextInput
+                value={text}
                 placeholder="Enter your message.."
                 onChangeText={setText}
                 onSubmitEditing={() => onClick(text)}
@@ -17,7 +23,7 @@ export default function ChatInput({onClick}) {
                 selectionColor="black"
                 autoCapitalize='none'
             />
-            <TouchableOpacity onPress={() => onClick(text)} style={styles.button}>
+            <TouchableOpacity onPress={() => onClick(text, clearText)} style={styles.button}>
                 <Icon name="send" size={20} color="white" />
             </TouchableOpacity>
         </View>

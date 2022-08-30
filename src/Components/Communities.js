@@ -1,60 +1,9 @@
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-export default function Communities({enterCommunity}) {
+export default function Communities({communities, enterCommunity}) {
 
-    const communities = [
-        {
-            code: 'aaa',
-            title: "Illuminati",
-            mambers: 5,
-        },
-        {
-            code: 'bbb',
-            title: "Secret Companies",
-            mambers: 30,
-        },
-        {
-            code: 'ccc',
-            title: "Assossiation of secret hold of donkey covenants",
-            mambers: 3,
-        },
-        {
-            code: 'ddd',
-            title: "The Avengers",
-            mambers: 6,
-        },
-        {
-            code: 'eee',
-            title: "Monsters on the run",
-            mambers: 300,
-        },
-        {
-            code: 'fff',
-            title: "Illuminati",
-            mambers: 5,
-        },
-        {
-            code: 'ggg',
-            title: "Secret Companies",
-            mambers: 30,
-        },
-        {
-            code: 'hhh',
-            title: "Assossiation of secret hold of donkey",
-            mambers: 3,
-        },
-        {
-            code: 'iii',
-            title: "The Avengers",
-            mambers: 6,
-        },
-        {
-            code: 'jjj',
-            title: "Monsters on the run",
-            mambers: 300,
-        },
-    ]
+
     
     return (
         <View style={styles.parent}>

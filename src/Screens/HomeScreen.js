@@ -21,6 +21,58 @@ export default function HomeScreen() {
     const [modalVisible2, setModalVisible2] = useState(false);
     const [loadingChat, setLoadingChat] = useState(false);
     const [is_auth, setIsAuth] = useState(true);
+    const [communities, setCommunities] = useState([
+        {
+            code: 'aaa',
+            title: "Illuminati",
+            mambers: 5,
+        },
+        {
+            code: 'bbb',
+            title: "Secret Companies",
+            mambers: 30,
+        },
+        {
+            code: 'ccc',
+            title: "Assossiation of secret hold of donkey covenants",
+            mambers: 3,
+        },
+        {
+            code: 'ddd',
+            title: "The Avengers",
+            mambers: 6,
+        },
+        {
+            code: 'eee',
+            title: "Monsters on the run",
+            mambers: 300,
+        },
+        {
+            code: 'fff',
+            title: "Illuminati",
+            mambers: 5,
+        },
+        {
+            code: 'ggg',
+            title: "Secret Companies",
+            mambers: 30,
+        },
+        {
+            code: 'hhh',
+            title: "Assossiation of secret hold of donkey",
+            mambers: 3,
+        },
+        {
+            code: 'iii',
+            title: "The Avengers",
+            mambers: 6,
+        },
+        {
+            code: 'jjj',
+            title: "Monsters on the run",
+            mambers: 300,
+        },
+    ])
 
     useEffect(() => {
       console.log(is_auth);
@@ -72,7 +124,6 @@ export default function HomeScreen() {
     // ! Create Community
     // ! ==================
     const createCommunity = (title, clearText) => {
-        console.log(code);
         setTimeout(() => {
             setModalVisible2(!modalVisible2)
             clearText()
@@ -80,7 +131,14 @@ export default function HomeScreen() {
             if(title == 'illuminati') {
                 Toast.show({type: 'error', text1: "Community already exist."});
             } else {
-                navigation.navigate('Chat', { code, title })
+                // navigation.navigate('Chat', { code, title })
+                const new_community = {
+                    code: 'lkaus',
+                    title: title,
+                    mambers: 1,
+                }
+
+                setCommunities([...communities, new_community])
             }
         }, 2000);
     }
@@ -129,7 +187,7 @@ export default function HomeScreen() {
         </View>
 
         
-        {is_auth && <Communities enterCommunity={enterCommunity}/>}
+        {is_auth && <Communities communities={communities} enterCommunity={enterCommunity}/>}
 
         
       </SafeAreaView>
