@@ -17,7 +17,7 @@ export default function ChatInput({onClick}) {
                 value={text}
                 placeholder="Enter your message.."
                 onChangeText={setText}
-                onSubmitEditing={() => onClick(text)}
+                onSubmitEditing={() => onClick(text, clearText)}
                 style={styles.input}
                 returnKeyType="send"
                 selectionColor="black"
