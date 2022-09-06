@@ -7,7 +7,6 @@ export default function ChatInput({onClick}) {
     const [text, setText] = useState("");
 
     const clearText = () => {
-        console.log("text Cleared");
         setText("")
     }
     

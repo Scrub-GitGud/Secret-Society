@@ -12,6 +12,9 @@ import CreateChatModal from '../Components/CreateChatModal';
 import Toast from 'react-native-toast-message';
 import Communities from '../Components/Communities';
 import CreateCommunityModal from '../Components/CreateCommunityModal';
+import {ref as firebaseRef, set, push, onValue} from "firebase/database";
+import { database } from '../../firebase';
+import { currentDate } from '../Utilities/Functions';
 
 export default function HomeScreen() {
   
@@ -82,21 +85,26 @@ export default function HomeScreen() {
     // ! Enter Chat
     // ! ==================
     const enterCode = (code, clearText) => {
+
+        const chatGroupRef = firebaseRef(database, `secret-society/chat_group/${code}`);
         setLoadingChat(true)
-        setTimeout(() => {
+        onValue(chatGroupRef, async (snapshot) => {
             setLoadingChat(false)
-            clearText()
-            if(code === 'aaa') {
+            if (snapshot.exists()){
+                clearText()
                 navigation.navigate('Chat', { code })
             } else {
                 Toast.show({type: 'error', text1: "Chat group doesn't exist. Please check your code."});
             }
-        }, 2000);
+        })
     }
     // ! ==================
     // ! Enter Community
     // ! ==================
     const enterCommunity = (code, title) => {
+
+        
+        
         setTimeout(() => {
             navigation.navigate('Chat', { code, title })
         }, 2000);
@@ -106,18 +114,10 @@ export default function HomeScreen() {
     // ! Create Chat
     // ! ==================
     const createChat = (code, clearText) => {
-        console.log(code);
-        setTimeout(() => {
-            setModalVisible(!modalVisible)
+        AddChatGroup(code, null, () => {
             clearText()
-            if(code === 'aaa') {
-                // ! If already exists, take to the chat group instead of creating.
-                Toast.show({type: 'error', text1: "Chat group already exist."});
-                setTimeout(() => navigation.navigate('Chat', { code }), 1000);
-            } else {
-                navigation.navigate('Chat', { code })
-            }
-        }, 2000);
+            setModalVisible(!modalVisible)
+        })
     }
 
     // ! ==================
@@ -141,6 +141,44 @@ export default function HomeScreen() {
                 setCommunities([...communities, new_community])
             }
         }, 2000);
+    }
+
+
+    // ! ==================
+    // ! Firebase work (FUCK THIS CODE: NOT WORKING)
+    // ! ==================
+    const AddChatGroup = async (code, title, callback) => {
+        const chatGroupRef = firebaseRef(database, `secret-society/chat_group/${code}`);
+        let exist = false;
+        const result = await onValue(chatGroupRef, async (snapshot) => {
+            console.log(snapshot.exists());
+            if (snapshot.exists()){
+                const data = snapshot.val();
+                console.log(data);
+                Toast.show({type: 'error', text1: "Chat group already exist."});
+                setTimeout(() => {
+                    navigation.navigate('Chat', { code })
+                    callback()
+                    exist = true;
+                }, 1000);
+            } else {
+                exist = false;
+            }
+        })
+
+        if(result && !exist) {
+            set(firebaseRef(database, `secret-society/chat_group/${code}`), {
+                title: title,
+                online: 0,
+                created_at: currentDate(),
+                messages: null,
+            }).then(() => {
+                callback()
+                navigation.navigate('Chat', { code })
+            }).catch((err) => {
+                console.error(err);
+            })
+        }
     }
 
     // ! ==================

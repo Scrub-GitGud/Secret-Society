@@ -9,7 +9,6 @@ export default function InputWithButton({onClick, icon, loadingChat, setLoadingC
     const [text, setText] = useState("");
 
     const clearText = () => {
-        console.log("text Cleared");
         setText("")
     }
     
