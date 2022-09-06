@@ -25,63 +25,35 @@ export default function HomeScreen() {
     const [modalVisible2, setModalVisible2] = useState(false);
     const [loadingChat, setLoadingChat] = useState(false);
     const [is_auth, setIsAuth] = useState(false);
-    const [communities, setCommunities] = useState([
-        {
-            code: 'aaa',
-            title: "Illuminati",
-            mambers: 5,
-        },
-        {
-            code: 'bbb',
-            title: "Secret Companies",
-            mambers: 30,
-        },
-        {
-            code: 'ccc',
-            title: "Assossiation of secret hold of donkey covenants",
-            mambers: 3,
-        },
-        {
-            code: 'ddd',
-            title: "The Avengers",
-            mambers: 6,
-        },
-        {
-            code: 'eee',
-            title: "Monsters on the run",
-            mambers: 300,
-        },
-        {
-            code: 'fff',
-            title: "Illuminati",
-            mambers: 5,
-        },
-        {
-            code: 'ggg',
-            title: "Secret Companies",
-            mambers: 30,
-        },
-        {
-            code: 'hhh',
-            title: "Assossiation of secret hold of donkey",
-            mambers: 3,
-        },
-        {
-            code: 'iii',
-            title: "The Avengers",
-            mambers: 6,
-        },
-        {
-            code: 'jjj',
-            title: "Monsters on the run",
-            mambers: 300,
-        },
-    ])
+    const [communities, setCommunities] = useState()
 
+    
     useEffect(() => {
         console.log(auth.currentUser);
         console.log('is_auth', is_auth);
+
+        loadCommunities()
+        
     }, [is_auth]);
+
+    const loadCommunities = async () => {
+        const username = auth.currentUser.email.replace('@g.com','')
+        
+        const communitiesRef = firebaseRef(database, `secret-society/user/${username}/communities`);
+  
+        onValue(communitiesRef, async (snapshot) => {
+            if (snapshot.exists()){
+                data = snapshot.val();
+                const communities = [];
+                for (let key in data) {
+                    communities.push({key, ...data[key]})
+                }
+                setCommunities(communities)
+            } else {
+                console.log("Not community found");
+            }
+        })
+      }
     
 
     // ! ==================
@@ -105,19 +77,14 @@ export default function HomeScreen() {
     // ! Enter Community
     // ! ==================
     const enterCommunity = (code, title) => {
-
-        
-        
-        setTimeout(() => {
-            navigation.navigate('Chat', { code, title })
-        }, 2000);
+        navigation.navigate('Chat', { code, title })
     }
 
     // ! ==================
     // ! Create Chat
     // ! ==================
     const createChat = (code, clearText) => {
-        AddChatGroup(code, null, () => {
+        AddChatGroup('chat_group', code, null, () => {
             clearText()
             setModalVisible(!modalVisible)
         })
@@ -126,7 +93,13 @@ export default function HomeScreen() {
     // ! ==================
     // ! Create Community
     // ! ==================
-    const createCommunity = (title, clearText) => {
+    const createCommunity = (code, title, clearText) => {
+
+        AddChatGroup('community', code, title, () => {
+            clearText()
+            setModalVisible2(!modalVisible2)
+        })
+        
         setTimeout(() => {
             setModalVisible2(!modalVisible2)
             clearText()
@@ -150,7 +123,7 @@ export default function HomeScreen() {
     // ! ==================
     // ! Firebase work (FUCK THIS CODE: NOT WORKING)
     // ! ==================
-    const AddChatGroup = async (code, title, callback) => {
+    const AddChatGroup = async (type = 'chat_group', code, title, callback) => {
         const chatGroupRef = firebaseRef(database, `secret-society/chat_group/${code}`);
         let exist = false;
         const result = await onValue(chatGroupRef, async (snapshot) => {
@@ -158,9 +131,14 @@ export default function HomeScreen() {
             if (snapshot.exists()){
                 const data = snapshot.val();
                 console.log(data);
-                Toast.show({type: 'error', text1: "Chat group already exist."});
+                
+                if(type === 'community') Toast.show({type: 'success', text1: "Joining the community."});
+                else if(type === 'chat_group') Toast.show({type: 'error', text1: "Chat group already exist."});
+
+                if(type === 'community') AddingUserToCommunity(code, title, false)
+                
                 setTimeout(() => {
-                    navigation.navigate('Chat', { code })
+                    if(type === 'chat_group') navigation.navigate('Chat', { code })
                     callback()
                     exist = true;
                 }, 1000);
@@ -169,6 +147,9 @@ export default function HomeScreen() {
             }
         })
 
+        // ! ==================
+        // ! Chat group doesn't exist, creating new one
+        // ! ==================
         if(result && !exist) {
             set(firebaseRef(database, `secret-society/chat_group/${code}`), {
                 title: title,
@@ -177,11 +158,35 @@ export default function HomeScreen() {
                 messages: null,
             }).then(() => {
                 callback()
-                navigation.navigate('Chat', { code })
+
+                if(type === 'community') AddingUserToCommunity(code, title, true)
+                
+                if(type === 'chat_group') navigation.navigate('Chat', { code })
             }).catch((err) => {
                 console.error(err);
             })
         }
+    }
+
+    // ! ====================
+    // ! If type community, adding the user to community.
+    // ! ====================
+    const AddingUserToCommunity = (code,title, is_owner = false) => {
+        const username = auth.currentUser.email.replace('@g.com','')
+
+        // TODO Check if user already added to the community.
+        
+        push(firebaseRef(database, `secret-society/user/${username}/communities`), {
+            code: code,
+            title: title,
+            is_owner: is_owner
+        }).then((pushed_item) => {
+            if(is_owner) Toast.show({type: 'success', text1: "Community join successful"})
+            else Toast.show({type: 'success', text1: "Succfully created the community"})
+            console.log(pushed_item);
+        }).catch((err) => {
+            console.error(err);
+        })
     }
 
     // ! ==================

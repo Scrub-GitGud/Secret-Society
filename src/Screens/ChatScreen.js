@@ -42,7 +42,7 @@ export default function ChatScreen({route}) {
               }
               setMessages(messages)
           } else {
-              console.log("// TODO: show -> Group doesn't exist.");
+            console.log("No messagefount");
           }
       })
     }

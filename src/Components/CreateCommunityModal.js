@@ -3,11 +3,13 @@ import { Alert, Modal, StyleSheet, Text, Pressable, View, TextInput } from "reac
 
 export default CreateCommunityModal = ({modalVisible, setModalVisible, createCommunity}) => {
 
-    const [text, setText] = useState("");
+    const [title, setTitle] = useState("");
+    const [code, setCode] = useState("");
 
     const clearText = () => {
         console.log("text Cleared");
-        setText("")
+        setTitle("")
+        setCode("")
     }
 
     return (
@@ -28,15 +30,16 @@ export default CreateCommunityModal = ({modalVisible, setModalVisible, createCom
 
                       <Text style={styles.title}>Create New Community</Text>
                       
-                      <TextInput placeholder='Enter the title' onChangeText={setText} value={text} style={styles.input} selectionColor="black" autoCapitalize='none'/>
+                      <TextInput placeholder='Enter the title' onChangeText={setTitle} value={title} style={styles.input} selectionColor="black" autoCapitalize='none'/>
+                      <TextInput placeholder='Enter a secret code' onChangeText={setCode} value={code} style={styles.input} selectionColor="black" autoCapitalize='none'/>
                     </View>
 
                     <View style={styles.flex}>
                         <Pressable style={[styles.button, styles.buttonClose]} onPress={() => setModalVisible(!modalVisible)}>
                           <Text style={[styles.textStyle, styles.textBlack]}>Close</Text>
                         </Pressable>
-                        <Pressable style={[styles.button, styles.buttonSubmit]} onPress={() => createCommunity(text, clearText)}>
-                          <Text style={styles.textStyle}>Create</Text>
+                        <Pressable style={[styles.button, styles.buttonSubmit]} onPress={() => createCommunity(code, title, clearText)}>
+                          <Text style={styles.textStyle}>Join</Text>
                         </Pressable>
                     </View>
                       
@@ -56,7 +59,7 @@ const styles = StyleSheet.create({
   },
   modalView: {
     width: '80%',
-    height: 170,
+    height: 220,
     margin: 20,
     backgroundColor: "white",
     borderRadius: 5,
@@ -89,6 +92,7 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingHorizontal: 10,
     paddingVertical: 5,
+    marginBottom: 10
   },
   flex: {
     flexDirection: 'row',
