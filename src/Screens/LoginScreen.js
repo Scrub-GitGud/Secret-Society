@@ -3,6 +3,8 @@ import { Image, Pressable, StyleSheet, Text, TextInput, TouchableOpacity, View }
 import CustomFontText from '../Components/CustomFontText';
 import Toast from 'react-native-toast-message';
 import { useNavigation } from '@react-navigation/native';
+import { GoogleAuthProvider, getAuth, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, signOut} from "firebase/auth";
+import { auth } from '../../firebase';
 
 export default function LoginScreen({route}) {
 
@@ -12,37 +14,65 @@ export default function LoginScreen({route}) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
-    const Login = () => {
+    const Login = async () => {
         if(username == '' || password == '') Toast.show({type: 'error', text1: "Please enter codename & password"});
-        setTimeout(() => {
-            if(username != 'www') {
-                Toast.show({type: 'error', text1: "User not found. Please check your codename"});
-            } else if(password != 'www') {
-                Toast.show({type: 'error', text1: "Wrong password. Please try again."});
-            } else {
-                setUsername("")
-                setPassword("")
-                Toast.show({type: 'success', text1: "Login Successful"});
-                route.params.setIsAuth(true)
-                setTimeout(() => navigation.goBack());
+
+        try {
+            const email = `${username}@g.com`
+            const res = await signInWithEmailAndPassword(auth, email, password);
+            const user = res.user;
+            console.log(user);
+
+            setUsername("")
+            setPassword("")
+            Toast.show({type: 'success', text1: "Login Successful"});
+            route.params.setIsAuth(true)
+            navigation.goBack()
+        } catch (err) {
+            console.error(err.code);
+            switch (err.code) {
+                case 'auth/user-not-found':
+                    Toast.show({type: 'error', text1: "User not found. Please check your codename"});
+                    break;
+                case 'auth/wrong-password':
+                    Toast.show({type: 'error', text1: "Wrong password. Please try again."});
+                    break;
+                default:
+                    alert(err.message); 
+                    break;
             }
-        }, 2000);
+        }
     }
 
-    const Register = () => {
-        console.log(username);
+    const Register = async () => {
+
         if(username == '' || password == '') Toast.show({type: 'error', text1: "Please enter codename & password"});
-        setTimeout(() => {
-            if(username == 'www') {
-                Toast.show({type: 'error', text1: "User already exist"});
-            } else {
-                setUsername("")
-                setPassword("")
-                Toast.show({type: 'success', text1: "Registration Successful"});
-                route.params.setIsAuth(true)
-                setTimeout(() => navigation.goBack());
+        
+        
+        try {
+            const email = `${username}@g.com`
+            const res = await createUserWithEmailAndPassword(auth, email, password);
+            const user = res.user;
+
+            setUsername("")
+            setPassword("")
+            Toast.show({type: 'success', text1: "Registration Successful"});
+            setIsRegistering(false)
+            
+          } catch (err) {
+            console.error(err.code);
+            switch (err.code) {
+                case 'auth/email-already-in-use':
+                    Toast.show({type: 'error', text1: "User already exist"});
+                    break;
+                case 'auth/weak-password':
+                    Toast.show({type: 'error', text1: "Password must contain atleast 6 characters."});
+                    break;
+                default:
+                    alert(err.message); 
+                    break;
             }
-        }, 2000);
+        }
     }
     
     return (
@@ -72,8 +102,6 @@ export default function LoginScreen({route}) {
                     <Text style={styles.sub_text}>Already have an account? <Text style={styles.blue_text}>Login.</Text></Text>
                 </TouchableOpacity>
             )}
-
-            
 
             <Toast />
         </View>

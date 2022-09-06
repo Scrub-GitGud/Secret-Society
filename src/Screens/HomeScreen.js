@@ -13,8 +13,9 @@ import Toast from 'react-native-toast-message';
 import Communities from '../Components/Communities';
 import CreateCommunityModal from '../Components/CreateCommunityModal';
 import {ref as firebaseRef, set, push, onValue} from "firebase/database";
-import { database } from '../../firebase';
+import { auth, database } from '../../firebase';
 import { currentDate } from '../Utilities/Functions';
+import { signOut} from "firebase/auth";
 
 export default function HomeScreen() {
   
@@ -23,7 +24,7 @@ export default function HomeScreen() {
     const [modalVisible, setModalVisible] = useState(false);
     const [modalVisible2, setModalVisible2] = useState(false);
     const [loadingChat, setLoadingChat] = useState(false);
-    const [is_auth, setIsAuth] = useState(true);
+    const [is_auth, setIsAuth] = useState(false);
     const [communities, setCommunities] = useState([
         {
             code: 'aaa',
@@ -78,8 +79,10 @@ export default function HomeScreen() {
     ])
 
     useEffect(() => {
-      console.log(is_auth);
+        console.log(auth.currentUser);
+        console.log('is_auth', is_auth);
     }, [is_auth]);
+    
 
     // ! ==================
     // ! Enter Chat
@@ -185,6 +188,7 @@ export default function HomeScreen() {
     // ! Logout
     // ! ==================
     const Logout = () => {
+        signOut(auth)
         setIsAuth(false)
         Toast.show({type: 'success', text1: "Logout Successful."});
     }

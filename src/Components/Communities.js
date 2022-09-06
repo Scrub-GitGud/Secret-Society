@@ -1,5 +1,6 @@
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import { auth } from '../../firebase';
 
 export default function Communities({communities, enterCommunity}) {
 
@@ -7,7 +8,10 @@ export default function Communities({communities, enterCommunity}) {
     
     return (
         <View style={styles.parent}>
-            <Text style={styles.title}>Your Communities</Text>
+            <Text style={styles.title}>
+                Your Communities
+                {auth.currentUser && ` (${auth.currentUser.email.replace('@g.com','')})`}
+            </Text>
             <ScrollView style={styles.scrollView}>
                 
                 {communities.map(community => (
