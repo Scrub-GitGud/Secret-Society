@@ -60,14 +60,12 @@ export default function ChatScreen({route}) {
             msg: text,
             time: '30 seconds ago'
         }).then((pushed_item) => {
+            clearText()
+            scrollViewRef.current.scrollToEnd({ animated: true })
             console.log(pushed_item);
         }).catch((err) => {
             console.error(err);
-        })
-        
-        // setMessages([...messages, new_msg])
-        // scrollViewRef.current.scrollToEnd({ animated: true })
-        // clearText()
+        })   
     }
     
     return (
