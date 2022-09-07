@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import {ref as firebaseRef, set, push, onValue} from "firebase/database";
 import { auth, database } from '../../firebase';
+import { currentDate } from '../Utilities/Functions';
 
 export default function ChatScreen({route}) {
 
@@ -57,7 +58,7 @@ export default function ChatScreen({route}) {
         push(firebaseRef(database, `secret-society/chat_group/${route.params.code}/messages`), {
             user: auth.currentUser.email.replace('@g.com',''),
             msg: text,
-            time: '30 seconds ago'
+            time: (new Date()).toString()
         }).then((pushed_item) => {
             clearText()
             scrollViewRef.current.scrollToEnd({ animated: true })

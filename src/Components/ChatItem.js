@@ -1,4 +1,5 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { timeSince } from '../Utilities/Functions';
 
 export default function ChatItem({onClick, this_user, user, msg, time}) {
 
@@ -10,7 +11,7 @@ export default function ChatItem({onClick, this_user, user, msg, time}) {
                 <TouchableOpacity onPress={onClick} style={[styles.item, my_msg ? [styles.right_msg, styles.right_msg_color] : styles.left_msg]}>
                     <Text style={[styles.item_text, my_msg ? styles.right_msg_color : null]}>{msg}</Text>
                 </TouchableOpacity>
-                <Text style={[styles.time_text, my_msg ? styles.right_msg : styles.left_msg]}>{time}</Text>
+                <Text style={[styles.time_text, my_msg ? styles.right_msg : styles.left_msg]}>{timeSince(time)} ago</Text>
             </View>
         </View>
     );
