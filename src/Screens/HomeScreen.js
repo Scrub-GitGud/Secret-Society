@@ -25,13 +25,14 @@ export default function HomeScreen() {
     const [modalVisible2, setModalVisible2] = useState(false);
     const [loadingChat, setLoadingChat] = useState(false);
     const [is_auth, setIsAuth] = useState(false);
-    const [communities, setCommunities] = useState()
+    const [communities, setCommunities] = useState([])
 
     
     useEffect(() => {
-        console.log(auth.currentUser);
+        // console.log(auth.currentUser);
         console.log('is_auth', is_auth);
 
+        setCommunities([])
         loadCommunities()
         
     }, [is_auth]);
@@ -41,7 +42,7 @@ export default function HomeScreen() {
         
         const communitiesRef = firebaseRef(database, `secret-society/user/${username}/communities`);
   
-        onValue(communitiesRef, async (snapshot) => {
+        await onValue(communitiesRef, async (snapshot) => {
             if (snapshot.exists()){
                 data = snapshot.val();
                 const communities = [];
@@ -100,72 +101,70 @@ export default function HomeScreen() {
             setModalVisible2(!modalVisible2)
         })
         
-        setTimeout(() => {
-            setModalVisible2(!modalVisible2)
-            clearText()
-            // TODO: Generate Code
-            if(title == 'illuminati') {
-                Toast.show({type: 'error', text1: "Community already exist."});
-            } else {
-                // navigation.navigate('Chat', { code, title })
-                const new_community = {
-                    code: 'lkaus',
-                    title: title,
-                    mambers: 1,
-                }
+        // setTimeout(() => {
+        //     setModalVisible2(!modalVisible2)
+        //     clearText()
+        //     // TODO: Generate Code
+        //     if(title == 'illuminati') {
+        //         Toast.show({type: 'error', text1: "Community already exist."});
+        //     } else {
+        //         // navigation.navigate('Chat', { code, title })
+        //         const new_community = {
+        //             code: 'lkaus',
+        //             title: title,
+        //             mambers: 1,
+        //         }
 
-                setCommunities([...communities, new_community])
-            }
-        }, 2000);
+        //         setCommunities([...communities, new_community])
+        //     }
+        // }, 2000);
     }
 
 
     // ! ==================
     // ! Firebase work (FUCK THIS CODE: NOT WORKING)
     // ! ==================
+    let flag = true;
     const AddChatGroup = async (type = 'chat_group', code, title, callback) => {
         const chatGroupRef = firebaseRef(database, `secret-society/chat_group/${code}`);
-        let exist = false;
-        const result = await onValue(chatGroupRef, async (snapshot) => {
-            console.log(snapshot.exists());
-            if (snapshot.exists()){
-                const data = snapshot.val();
-                console.log(data);
+        await onValue(chatGroupRef, async (snapshot) => {
+            if (snapshot.exists() && flag){
+                flag = false
+                setTimeout(() => {flag = true}, 2000);
+
+                console.info("Exist");
                 
                 if(type === 'community') Toast.show({type: 'success', text1: "Joining the community."});
                 else if(type === 'chat_group') Toast.show({type: 'error', text1: "Chat group already exist."});
 
-                if(type === 'community') AddingUserToCommunity(code, title, false)
+                if(type === 'community') AddingUserToCommunity(code, snapshot.val().title, false)
                 
-                setTimeout(() => {
-                    if(type === 'chat_group') navigation.navigate('Chat', { code })
+                if(type === 'chat_group') {
+                    setTimeout(() => {
+                        navigation.navigate('Chat', { code })
+                    }, 1000);
+                }
+                callback()
+            } else if(flag) {
+                flag = false
+                setTimeout(() => {flag = true}, 2000);
+                
+                console.info("Not Exist");
+                set(firebaseRef(database, `secret-society/chat_group/${code}`), {
+                    title: title,
+                    online: 0,
+                    created_at: currentDate(),
+                    messages: null,
+                }).then(() => {
                     callback()
-                    exist = true;
-                }, 1000);
-            } else {
-                exist = false;
+    
+                    if(type === 'community') AddingUserToCommunity(code, title, true)
+                    if(type === 'chat_group') navigation.navigate('Chat', { code })
+                }).catch((err) => {
+                    console.error(err);
+                })
             }
         })
-
-        // ! ==================
-        // ! Chat group doesn't exist, creating new one
-        // ! ==================
-        if(result && !exist) {
-            set(firebaseRef(database, `secret-society/chat_group/${code}`), {
-                title: title,
-                online: 0,
-                created_at: currentDate(),
-                messages: null,
-            }).then(() => {
-                callback()
-
-                if(type === 'community') AddingUserToCommunity(code, title, true)
-                
-                if(type === 'chat_group') navigation.navigate('Chat', { code })
-            }).catch((err) => {
-                console.error(err);
-            })
-        }
     }
 
     // ! ====================
@@ -181,7 +180,7 @@ export default function HomeScreen() {
             title: title,
             is_owner: is_owner
         }).then((pushed_item) => {
-            if(is_owner) Toast.show({type: 'success', text1: "Community join successful"})
+            if(is_owner) Toast.show({type: 'success', text1: "Successfully joined the community"})
             else Toast.show({type: 'success', text1: "Succfully created the community"})
             console.log(pushed_item);
         }).catch((err) => {

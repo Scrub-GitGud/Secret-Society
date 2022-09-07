@@ -5,7 +5,7 @@ import ChatItem from '../Components/ChatItem';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import {ref as firebaseRef, set, push, onValue} from "firebase/database";
-import { database } from '../../firebase';
+import { auth, database } from '../../firebase';
 
 export default function ChatScreen({route}) {
 
@@ -13,6 +13,7 @@ export default function ChatScreen({route}) {
 
     const [is_loading, setIsLoading] = useState(true)
     const [messages, setMessages] = useState([])
+    const this_user = auth.currentUser.email.replace('@g.com','')
 
     // ! Changing Screen Header title
     useEffect(() => {
@@ -48,15 +49,13 @@ export default function ChatScreen({route}) {
     }
 
     const scrollViewRef = useRef();
-
-    const this_user = 'xxx' // TODO:
     
     
 
     const send = (text, clearText) => {
 
         push(firebaseRef(database, `secret-society/chat_group/${route.params.code}/messages`), {
-            user: "xxx",
+            user: auth.currentUser.email.replace('@g.com',''),
             msg: text,
             time: '30 seconds ago'
         }).then((pushed_item) => {

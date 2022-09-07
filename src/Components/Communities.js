@@ -16,7 +16,7 @@ export default function Communities({communities, enterCommunity}) {
                 
                 {communities.map(community => (
                     <TouchableOpacity onPress={() => enterCommunity(community.code, community.title)} key={community.code} style={styles.community_item}>
-                        <Text style={styles.community_title}>{community.title} ({community.mambers})</Text>
+                        <Text style={styles.community_title}>{community.title}</Text>
                         <MaterialIcons style={styles.fowar_icon} name="arrow-forward-ios" size={20} />
                     </TouchableOpacity>
                 ))}
