@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
   },
   modalView: {
     width: '80%',
-    height: 170,
+    height: 200,
     margin: 20,
     backgroundColor: "white",
     borderRadius: 5,
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     width: '90%',
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     textAlign: "center",
     marginBottom: 15,
     fontWeight: "700"

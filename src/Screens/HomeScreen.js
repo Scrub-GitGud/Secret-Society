@@ -100,24 +100,6 @@ export default function HomeScreen() {
             clearText()
             setModalVisible2(!modalVisible2)
         })
-        
-        // setTimeout(() => {
-        //     setModalVisible2(!modalVisible2)
-        //     clearText()
-        //     // TODO: Generate Code
-        //     if(title == 'illuminati') {
-        //         Toast.show({type: 'error', text1: "Community already exist."});
-        //     } else {
-        //         // navigation.navigate('Chat', { code, title })
-        //         const new_community = {
-        //             code: 'lkaus',
-        //             title: title,
-        //             mambers: 1,
-        //         }
-
-        //         setCommunities([...communities, new_community])
-        //     }
-        // }, 2000);
     }
 
 
